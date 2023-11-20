@@ -87,7 +87,11 @@ func countTokenMessages(messages []Message, model string) int {
 	tokenNum := 0
 	for _, message := range messages {
 		tokenNum += tokensPerMessage
-		tokenNum += getTokenNum(tokenEncoder, message.StringContent())
+		if model == "gpt-4-vision-preview" {
+			tokenNum += countTokenVisionMessageContent(tokenEncoder, message)
+		} else {
+			tokenNum += getTokenNum(tokenEncoder, message.StringContent())
+		}
 		tokenNum += getTokenNum(tokenEncoder, message.Role)
 		if message.Name != nil {
 			tokenNum += tokensPerName
@@ -96,6 +100,40 @@ func countTokenMessages(messages []Message, model string) int {
 	}
 	tokenNum += 3 // Every reply is primed with <|start|>assistant<|message|>
 	return tokenNum
+}
+
+func countTokenVisionMessageContent(tokenEncoder *tiktoken.Tiktoken, message Message) int {
+	content, ok := message.Content.(string)
+	if ok {
+		return getTokenNum(tokenEncoder, content)
+	}
+	contentList, ok := message.Content.([]any)
+	if ok {
+		var contentString string
+		tokenImage := 0
+		for _, contentItem := range contentList {
+			contentMap, ok := contentItem.(map[string]any)
+			if !ok {
+				continue
+			}
+			if contentMap["type"] == "text" {
+				if contentText, ok := contentMap["text"].(string); ok {
+					contentString += contentText
+				}
+			} else if contentMap["type"] == "image_url" {
+				if contentImage, ok := contentMap["image_url"].(map[string]any); ok {
+					if contentImage["detail"] != "low" {
+						tokenImage += 1105 // 85 + 170 × 6
+					} else {
+						tokenImage += 85
+					}
+				}
+			}
+		}
+		tokenString := getTokenNum(tokenEncoder, contentString)
+		return tokenString + tokenImage
+	}
+	return 0
 }
 
 func countTokenInput(input any, model string) int {
