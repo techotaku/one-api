@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/songquanpeng/one-api/common/config"
+	"github.com/songquanpeng/one-api/common/ctxkey"
 	"github.com/songquanpeng/one-api/model"
 	"net/http"
 	"strconv"
@@ -56,7 +57,7 @@ func GetUserLogs(c *gin.Context) {
 	if p < 0 {
 		p = 0
 	}
-	userId := c.GetInt("id")
+	userId := c.GetInt(ctxkey.Id)
 	logType, _ := strconv.Atoi(c.Query("type"))
 	startTimestamp, _ := strconv.ParseInt(c.Query("start_timestamp"), 10, 64)
 	endTimestamp, _ := strconv.ParseInt(c.Query("end_timestamp"), 10, 64)
@@ -98,7 +99,7 @@ func SearchAllLogs(c *gin.Context) {
 
 func SearchUserLogs(c *gin.Context) {
 	keyword := c.Query("keyword")
-	userId := c.GetInt("id")
+	userId := c.GetInt(ctxkey.Id)
 	logs, err := model.SearchUserLogs(userId, keyword)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -137,7 +138,7 @@ func GetLogsStat(c *gin.Context) {
 }
 
 func GetLogsSelfStat(c *gin.Context) {
-	username := c.GetString("username")
+	username := c.GetString(ctxkey.Username)
 	logType, _ := strconv.Atoi(c.Query("type"))
 	startTimestamp, _ := strconv.ParseInt(c.Query("start_timestamp"), 10, 64)
 	endTimestamp, _ := strconv.ParseInt(c.Query("end_timestamp"), 10, 64)
