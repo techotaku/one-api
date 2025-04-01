@@ -531,6 +531,7 @@
         "from_placeholder": "Usually same as email address",
         "token": "SMTP Access Token",
         "token_placeholder": "Sensitive information will not be sent to frontend",
+        "auth_login": "Use LOGIN as SMTP authentication method",
         "buttons": {
           "save": "Save SMTP Settings"
         }

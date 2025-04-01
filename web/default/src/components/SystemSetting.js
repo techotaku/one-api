@@ -28,6 +28,7 @@ const SystemSetting = () => {
     SMTPAccount: '',
     SMTPFrom: '',
     SMTPToken: '',
+    SMTPAuthLoginEnabled: '',
     ServerAddress: '',
     Footer: '',
     WeChatAuthEnabled: '',
@@ -89,6 +90,7 @@ const SystemSetting = () => {
       case 'TurnstileCheckEnabled':
       case 'EmailDomainRestrictionEnabled':
       case 'RegisterEnabled':
+      case 'SMTPAuthLoginEnabled':
         value = inputs[key] === 'true' ? 'false' : 'true';
         break;
       default:
@@ -121,7 +123,7 @@ const SystemSetting = () => {
     }
     if (
       name === 'Notice' ||
-      name.startsWith('SMTP') ||
+      (name.startsWith('SMTP') && !name.endsWith('Enabled')) ||
       name === 'ServerAddress' ||
       name === 'GitHubClientId' ||
       name === 'GitHubClientSecret' ||
@@ -493,6 +495,12 @@ const SystemSetting = () => {
               onChange={handleInputChange}
               type='password'
               value={inputs.SMTPToken}
+            />
+            <Form.Checkbox
+              checked={inputs.SMTPAuthLoginEnabled === 'true'}
+              label={t('setting.system.smtp.auth_login')}
+              name='SMTPAuthLoginEnabled'
+              onChange={handleInputChange}
             />
           </Form.Group>
           <Form.Button onClick={submitSMTP}>

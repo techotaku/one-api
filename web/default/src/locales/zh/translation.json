@@ -531,6 +531,7 @@
         "from_placeholder": "通常和邮箱地址保持一致",
         "token": "SMTP 访问凭证",
         "token_placeholder": "敏感信息不会发送到前端显示",
+        "auth_login": "使用 SMTP LOGIN 认证方式",
         "buttons": {
           "save": "保存 SMTP 设置"
         }
